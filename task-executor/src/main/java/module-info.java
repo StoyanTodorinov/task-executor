@@ -7,5 +7,7 @@ module com.example.taskexecutor {
     opens com.example.taskexecutor to javafx.fxml;
     exports com.example.taskexecutor;
     exports com.example.taskexecutor.controller;
+    exports com.example.taskexecutor.misc;
+    exports com.example.taskexecutor.enums;
     opens com.example.taskexecutor.controller to javafx.fxml;
 }

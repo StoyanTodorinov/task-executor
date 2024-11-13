@@ -5,7 +5,6 @@ import com.example.taskexecutor.controller.ClickRecordController;
 import com.example.taskexecutor.dialog.KeyboardPressDialog;
 import com.example.taskexecutor.dialog.MouseClickDialog;
 import com.example.taskexecutor.misc.Action;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,69 +12,80 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
+import javafx.util.converter.IntegerStringConverter;
 
 public class ViewBuilder {
 
     private final ClickRecordController clickRecordController = new ClickRecordController();
 
     public Scene build() {
+        TableView<Action> tableView = createTableView();
+
         Button buttonMouse = new Button();
-        buttonMouse.setText(AppConstants.ADD_MOUSE_LEFT_CLICK_EVENT_BUTTON);
+        buttonMouse.setText(AppConstants.START);
         buttonMouse.setOnAction(_ -> {
-            Dialog<Action> dialog = new MouseClickDialog();
-            dialog.showAndWait().ifPresent(action -> {
-                System.out.println(action.screen_x + " : " + action.screen_y + " : " + action.delay);
-                clickRecordController.addAction(action);
-            });
+            // TODO
+            System.out.println("STARTING...");
         });
 
         Button buttonKey = new Button();
-        buttonKey.setText(AppConstants.ADD_KEYBOARD_EVENT_BUTTON);
+        buttonKey.setText(AppConstants.STOP);
         buttonKey.setOnAction(_ -> {
-            Dialog<Action> dialog = new KeyboardPressDialog();
-            dialog.showAndWait().ifPresent(action -> {
-                System.out.println(action.key + " : " + action.delay);
-                clickRecordController.addAction(action);
-            });
+            // TODO
+            System.out.println("STOPPING...");
         });
 
         VBox pane = new VBox(10);
-        pane.getChildren().addAll(buttonMouse, buttonKey, createTableView());
+        pane.getChildren().addAll(buttonMouse, buttonKey, tableView);
 
         Group root = new Group(pane);
 
         return new Scene(root, AppConstants.WIDTH, AppConstants.HEIGHT);
     }
 
-    public VBox createTableView() {
+    public TableView<Action> createTableView() {
         // New Table View
-        TableView tbv = new TableView();
-        // Create two columns
-        TableColumn<String, Action> cl1 = new TableColumn<>("TYPE");
-        cl1.setCellValueFactory(new PropertyValueFactory<>("type"));
+        TableView<Action> table = new TableView<>();
+        table.setEditable(true);
 
-        TableColumn<Integer, Action> cl2 = new TableColumn<>("OPERATION");
-        cl2.setCellValueFactory(new PropertyValueFactory<>("salary"));
+        // Create columns
+        TableColumn<Action, Integer> xColumn = new TableColumn<>("X");
+        xColumn.setCellValueFactory(new PropertyValueFactory<>("screen_x"));
+        xColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        xColumn.setOnEditCommit(event -> event.getRowValue().setScreen_x(event.getNewValue()));
 
-        TableColumn<Integer, Action> cl3 = new TableColumn<>("DELAY");
-        cl3.setCellValueFactory(new PropertyValueFactory<>("delay"));
+        TableColumn<Action, Integer> yColumn = new TableColumn<>("Y");
+        yColumn.setCellValueFactory(new PropertyValueFactory<>("screen_y"));
+        yColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        yColumn.setOnEditCommit(event -> event.getRowValue().setScreen_y(event.getNewValue()));
 
-        // Add two columns into TableView
-        tbv.getColumns().add(cl1);
-        tbv.getColumns().add(cl2);
-        tbv.getColumns().add(cl3);
+        TableColumn<Action, String> keyColumn = new TableColumn<>("KEY");
+        keyColumn.setCellValueFactory(new PropertyValueFactory<>("key"));
+        keyColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        keyColumn.setOnEditCommit(event -> event.getRowValue().setKey(event.getNewValue()));
+
+        TableColumn<Action, Integer> waitColumn = new TableColumn<>("WAIT");
+        waitColumn.setCellValueFactory(new PropertyValueFactory<>("delay"));
+        waitColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        waitColumn.setOnEditCommit(event -> event.getRowValue().setDelay(event.getNewValue()));
+
+        // Add columns into TableView
+        table.getColumns().add(xColumn);
+        table.getColumns().add(yColumn);
+        table.getColumns().add(keyColumn);
+        table.getColumns().add(waitColumn);
+
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         // Load objects into table
-        for (Action action : clickRecordController.getActions()) {
-            tbv.getItems().add(action);
-        }
+        table.getItems().add(new Action());
+        table.getItems().add(new Action());
+        table.getItems().add(new Action());
+        table.getItems().add(new Action());
+        table.getItems().add(new Action());
 
-        VBox vbox = new VBox();
-        vbox.getChildren().addAll(tbv);
-        vbox.setSpacing(10);
-        vbox.setAlignment(Pos.CENTER);
-
-        return vbox;
+        return table;
     }
 }

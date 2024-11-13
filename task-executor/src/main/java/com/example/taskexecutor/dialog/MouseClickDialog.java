@@ -40,9 +40,9 @@ public class MouseClickDialog extends Dialog<Action> {
     }
 
     private void setPropertyBindings() {
-        this.screen_x.textProperty().bindBidirectional(this.action.screen_x);
-        this.screen_y.textProperty().bindBidirectional(this.action.screen_y);
-        this.delay.textProperty().bindBidirectional(this.action.delay);
+//        this.screen_x.textProperty().bindBidirectional(this.action.screen_x);
+//        this.screen_y.textProperty().bindBidirectional(this.action.screen_y);
+//        this.delay.textProperty().bindBidirectional(this.action.delay);
     }
 
     private void setResultConverter() {

@@ -39,8 +39,8 @@ public class KeyboardPressDialog extends Dialog<Action> {
     }
 
     private void setPropertyBindings() {
-        this.key.textProperty().bindBidirectional(this.action.key);
-        this.delay.textProperty().bindBidirectional(this.action.delay);
+//        this.key.textProperty().bindBidirectional(this.action.key);
+//        this.delay.textProperty().bindBidirectional(this.action.delay);
     }
 
     private void setResultConverter() {
