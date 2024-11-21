@@ -1,7 +1,7 @@
 module com.example.taskexecutor {
     requires javafx.controls;
     requires javafx.fxml;
-    requires java.desktop;
+    requires com.github.kwhat.jnativehook;
 
 
     opens com.example.taskexecutor to javafx.fxml;
