@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Main-Class: com.example.taskexecutor.Application
+Class-Path: jnativehook-2.2.2.jar javafx-controls-17.0.6.jar javafx-base
+ -17.0.6.jar javafx-graphics-17.0.6.jar javafx-controls-17.0.6-win.jar j
+ avafx-graphics-17.0.6-win.jar javafx-base-17.0.6-win.jar
+

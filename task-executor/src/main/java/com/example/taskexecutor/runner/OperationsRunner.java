@@ -33,7 +33,7 @@ public class OperationsRunner implements Runnable {
                     return;
                 }
 
-                if (this.clickRecordController.getState() != AppState.RUNNING) {
+                if (this.clickRecordController.getState().get() != AppState.RUNNING) {
                     return;
                 }
             }

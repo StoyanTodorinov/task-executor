@@ -1,0 +1,5 @@
+.table-view:disabled {
+    -fx-opacity: 0.6; /* Make the table appear grayed out */
+    -fx-background-color: #f0f0f0; /* Light gray background */
+    -fx-border-color: darkgray; /* Optional border color */
+}

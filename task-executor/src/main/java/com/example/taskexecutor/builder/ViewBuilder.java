@@ -3,11 +3,11 @@ package com.example.taskexecutor.builder;
 import com.example.taskexecutor.constant.Constants;
 import com.example.taskexecutor.controller.ClickRecordController;
 import com.example.taskexecutor.enums.ActionType;
+import com.example.taskexecutor.enums.AppState;
 import com.example.taskexecutor.misc.Action;
 import com.example.taskexecutor.misc.GlobalKeyListener;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -26,7 +26,7 @@ import java.awt.*;
 public class ViewBuilder {
 
     // TODO normal naming, make private and use getters and setters
-    public boolean RECORD_NEXT_KEY_PRESS = false;
+    private boolean RECORD_NEXT_KEY_PRESS = false;
     private final ClickRecordController clickRecordController = new ClickRecordController();
 
     public Scene build() {
@@ -37,7 +37,6 @@ public class ViewBuilder {
         VBox.setVgrow(tableView, Priority.ALWAYS);
         VBox.setVgrow(buttonPane, Priority.ALWAYS);
 
-        setStartStopListener(vbox, tableView);
         setupKeyPressRecorded(vbox, tableView);
         registerGlobalKeyOperations(tableView);
 
@@ -88,7 +87,8 @@ public class ViewBuilder {
         actionTypeColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.2));
         removeActionColumn.prefWidthProperty().bind(table.widthProperty().multiply(0.25));
 
-//        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        // disable table when executing operations
+        table.disableProperty().bind(clickRecordController.getState().isEqualTo(AppState.RUNNING));
 
         return table;
     }
@@ -99,6 +99,11 @@ public class ViewBuilder {
         Button addLeftMouseClick = createLeftMouseClickButton(tableView);
         Button addRightMouseClick = createRightMouseClickButton(tableView);
         Button addKeyboardPress = createKeyboardPressButton(tableView);
+
+        // disable all buttons dynamically when operations are executing
+        addLeftMouseClick.disableProperty().bind(clickRecordController.getState().isEqualTo(AppState.RUNNING));
+        addRightMouseClick.disableProperty().bind(clickRecordController.getState().isEqualTo(AppState.RUNNING));
+        addKeyboardPress.disableProperty().bind(clickRecordController.getState().isEqualTo(AppState.RUNNING));
 
         buttonPanel.add(addLeftMouseClick, 1, 0);
         buttonPanel.add(addRightMouseClick, 2, 0);
@@ -112,7 +117,6 @@ public class ViewBuilder {
     private Button createLeftMouseClickButton(final TableView<Action> tableView) {
         Button addMouseClick = new Button(Constants.ADD_LEFT_MOUSE_CLICK);
         addMouseClick.setOnAction(_ -> {
-            // TODO
             try {
                 System.out.println("ADDING LEFT MOUSE CLICK RECORD...");
                 Thread.sleep(2000);
@@ -133,7 +137,6 @@ public class ViewBuilder {
     private Button createRightMouseClickButton(final TableView<Action> tableView) {
         Button addMouseClick = new Button(Constants.ADD_RIGHT_MOUSE_CLICK);
         addMouseClick.setOnAction(_ -> {
-            // TODO
             try {
                 System.out.println("ADDING RIGHT MOUSE CLICK RECORD...");
                 Thread.sleep(2000);
@@ -175,23 +178,6 @@ public class ViewBuilder {
                 tableView.getItems().add(keyboardAction);
 
                 this.RECORD_NEXT_KEY_PRESS = false;
-            }
-        });
-    }
-
-    private void setStartStopListener(VBox root, final TableView<Action> tableView) {
-        root.setOnKeyPressed(event -> {
-            KeyCode keyPressed = event.getCode();
-            if (keyPressed.getName().equalsIgnoreCase(Constants.F_11)) {
-                try {
-                    this.clickRecordController.start(tableView);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            if (keyPressed.getName().equalsIgnoreCase(Constants.F_12)) {
-                this.clickRecordController.stop();
             }
         });
     }
